@@ -69,9 +69,15 @@ async function run() {
         // all toys get route
         app.get('/my-toys', async (req, res) => {
             try {
-                const { sellerEmail } = req.query;
+                const { sellerEmail, sortBy } = req.query;
 
-                const allToysData = await allToys.find({ sellerEmail }).toArray();
+                let sortOption = {};
+                if (sortBy === 'asc') {
+                    sortOption = { price: 1 };
+                } else if (sortBy === 'desc') {
+                    sortOption = { price: -1 };
+                }
+                const allToysData = await allToys.find({ sellerEmail }).sort(sortOption).toArray();
                 res.status(200).json({
                     success: true,
                     message: `All Toys for ${sellerEmail}`,
@@ -128,7 +134,6 @@ async function run() {
         app.patch('/update-toys-details', async (req, res) => {
             try {
                 const { id } = req.query;
-                console.log(req.body);
                 const updateDoc = {
                     $set: {
                         ...req.body.data,
@@ -151,6 +156,7 @@ async function run() {
                 });
             }
         });
+
         // single id delete toy information
         app.delete('/delete-toys-details', async (req, res) => {
             try {
