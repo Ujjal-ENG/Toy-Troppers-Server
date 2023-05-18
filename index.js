@@ -151,6 +151,25 @@ async function run() {
                 });
             }
         });
+        // single id delete toy information
+        app.delete('/delete-toys-details', async (req, res) => {
+            try {
+                const { id } = req.query;
+                const singleToysDeleteData = await allToys.deleteOne({ _id: new ObjectId(id) });
+                if (singleToysDeleteData.deletedCount === 1) {
+                    res.status(200).json({
+                        success: true,
+                        message: 'Successfully deleted one document.',
+                    });
+                }
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    success: false,
+                    message: 'Error occurs while get The Single Toy Details.',
+                });
+            }
+        });
 
         // Send a ping to confirm a successful connection
         await client.db('admin').command({ ping: 1 });
