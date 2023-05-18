@@ -52,7 +52,7 @@ async function run() {
                     query = { subCategory: category };
                 }
                 const allToysData = await allToys.find(query).toArray();
-                res.status(200).json({
+                res.status(500).json({
                     success: true,
                     message: 'All Toys',
                     toys: allToysData,
@@ -78,7 +78,7 @@ async function run() {
                 });
             } catch (error) {
                 console.log(error);
-                res.status(404).json({
+                res.status(500).json({
                     success: false,
                     message: 'Error occurs while get The Single Toy Details.',
                 });
