@@ -3,7 +3,7 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ObjectId, ServerApiVersion } from 'mongodb';
 
 // config dotenv
 dotenv.config();
@@ -62,6 +62,25 @@ async function run() {
                 res.status(404).json({
                     success: false,
                     message: 'Error occurs while get The all Toys',
+                });
+            }
+        });
+
+        // single id fetching toy information
+        app.get('/single-toys-details/:id', async (req, res) => {
+            try {
+                const { id } = req.params;
+                const singleToysData = await allToys.findOne({ _id: new ObjectId(id) });
+                res.status(200).json({
+                    success: true,
+                    message: 'Single Toy Details.',
+                    toys: singleToysData,
+                });
+            } catch (error) {
+                console.log(error);
+                res.status(404).json({
+                    success: false,
+                    message: 'Error occurs while get The Single Toy Details.',
                 });
             }
         });
