@@ -52,14 +52,14 @@ async function run() {
                     query = { subCategory: category };
                 }
                 const allToysData = await allToys.find(query).toArray();
-                res.status(500).json({
+                res.status(200).json({
                     success: true,
                     message: 'All Toys',
                     toys: allToysData,
                 });
             } catch (error) {
                 console.log(error);
-                res.status(404).json({
+                res.status(500).json({
                     success: false,
                     message: 'Error occurs while get The all Toys',
                 });
