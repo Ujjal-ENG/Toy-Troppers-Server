@@ -84,6 +84,23 @@ async function run() {
                 });
             }
         });
+        // add toys
+        app.post('/add-toys', async (req, res) => {
+            try {
+                const singleToyAddData = await allToys.insertOne(req.body.data);
+                res.status(200).json({
+                    success: true,
+                    message: 'Single Toy Added Details.',
+                    toys: singleToyAddData,
+                });
+            } catch (error) {
+                console.log(error);
+                res.status(404).json({
+                    success: false,
+                    message: 'Error occurs while Post The Single Toy Details.',
+                });
+            }
+        });
 
         // Send a ping to confirm a successful connection
         await client.db('admin').command({ ping: 1 });
