@@ -1,3 +1,4 @@
+/* eslint-disable no-tabs */
 // dependencies
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -16,7 +17,9 @@ app.use(cors());
 
 // set up the default route and health routes
 app.get('/', (req, res) => {
-    res.status(200).json({ message: 'Hello From Toy-Troppers Server, developed by Ujjal Kumar Roy' });
+    res.status(200).json({
+        message: 'Hello From Toy-Troppers Server, developed by Ujjal Kumar Roy',
+    });
 });
 
 app.get('/health', (req, res) => {
@@ -30,8 +33,8 @@ const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
         strict: true,
-        deprecationErrors: true
-    }
+        deprecationErrors: true,
+    },
 });
 async function run() {
     try {
@@ -43,17 +46,22 @@ async function run() {
         // all toys get route
         app.get('/all-toys', async (req, res) => {
             try {
-              const allToysData = await allToys.find().toArray();
-              res.status(200).json({
-                success: true,
-                message: "All Toys",
-                toys: allToysData
-              })
+                const { category } = req.query;
+                let query = {};
+                if (category) {
+                    query = { subCategory: category };
+                }
+                const allToysData = await allToys.find(query).toArray();
+                res.status(200).json({
+                    success: true,
+                    message: 'All Toys',
+                    toys: allToysData,
+                });
             } catch (error) {
                 console.log(error);
                 res.status(404).json({
                     success: false,
-                    message: 'Error occurs while get The all Toys'
+                    message: 'Error occurs while get The all Toys',
                 });
             }
         });
@@ -73,5 +81,5 @@ const PORT = process.env.PORT || 8080;
 
 // listen the port
 app.listen(PORT, () => {
-    console.log(`Server is running at PORT 8080`);
+    console.log('Server is running at PORT 8080');
 });
