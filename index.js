@@ -87,7 +87,8 @@ async function run() {
         // add toys
         app.post('/add-toys', async (req, res) => {
             try {
-                const singleToyAddData = await allToys.insertOne(req.body.data);
+                const toyData = req.body.data;
+                const singleToyAddData = await allToys.insertOne(toyData);
                 res.status(200).json({
                     success: true,
                     message: 'Single Toy Added Details.',
@@ -95,9 +96,9 @@ async function run() {
                 });
             } catch (error) {
                 console.log(error);
-                res.status(404).json({
+                res.status(500).json({
                     success: false,
-                    message: 'Error occurs while Post The Single Toy Details.',
+                    message: 'Error occurred while adding the single toy details.',
                 });
             }
         });
