@@ -1,3 +1,4 @@
+/* eslint-disable comma-dangle */
 /* eslint-disable no-tabs */
 // dependencies
 import cors from 'cors';
@@ -103,6 +104,7 @@ async function run() {
                 });
             }
         });
+
         // add toys
         app.post('/add-toys', async (req, res) => {
             try {
@@ -118,6 +120,34 @@ async function run() {
                 res.status(500).json({
                     success: false,
                     message: 'Error occurred while adding the single toy details.',
+                });
+            }
+        });
+
+        // single id update toy information
+        app.patch('/update-toys-details', async (req, res) => {
+            try {
+                const { id } = req.query;
+                console.log(req.body);
+                const updateDoc = {
+                    $set: {
+                        ...req.body.data,
+                    },
+                };
+                const singleToysUpdateData = await allToys.updateOne(
+                    { _id: new ObjectId(id) },
+                    updateDoc
+                );
+                res.status(200).json({
+                    success: true,
+                    message: 'Single Toy Details.',
+                    toys: singleToysUpdateData,
+                });
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    success: false,
+                    message: 'Error occurs while get The Single Toy Details.',
                 });
             }
         });
