@@ -65,6 +65,25 @@ async function run() {
                 });
             }
         });
+        // all toys get route
+        app.get('/my-toys', async (req, res) => {
+            try {
+                const { sellerEmail } = req.query;
+
+                const allToysData = await allToys.find({ sellerEmail }).toArray();
+                res.status(200).json({
+                    success: true,
+                    message: `All Toys for ${sellerEmail}`,
+                    toys: allToysData,
+                });
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    success: false,
+                    message: 'Error occurs while get The all Toys for Specific User!',
+                });
+            }
+        });
 
         // single id fetching toy information
         app.get('/single-toys-details/:id', async (req, res) => {
