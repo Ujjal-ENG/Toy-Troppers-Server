@@ -71,13 +71,20 @@ async function run() {
             res.json({ token });
         });
 
+        // for searching
+        const indexKeys = { name: 1 };
+        const indexOptions = { name: 'name' };
+        await allToys.createIndex(indexKeys, indexOptions);
         // all toys get route
         app.get('/all-toys', async (req, res) => {
             try {
-                const { category } = req.query;
+                const { category, searchQuery } = req.query;
                 let query = {};
                 if (category) {
                     query = { subCategory: category };
+                }
+                if (searchQuery) {
+                    query.name = { $regex: searchQuery, $options: 'i' };
                 }
                 const allToysData = await allToys.find(query).toArray();
                 res.status(200).json({
