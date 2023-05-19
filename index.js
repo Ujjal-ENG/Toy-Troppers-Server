@@ -61,6 +61,7 @@ async function run() {
         // await client.connect();
 
         const allToys = client.db('Toy-Troppers').collection('AllToys');
+        const blogs = client.db('Toy-Troppers').collection('Blogs');
 
         // jwt
         app.post('/jwt', async (req, res) => {
@@ -125,6 +126,23 @@ async function run() {
             }
         });
 
+        // all blogs get route
+        app.get('/blogs', async (req, res) => {
+            try {
+                const blogsData = await blogs.find().toArray();
+                res.status(200).json({
+                    success: true,
+                    message: 'All Blogs',
+                    blogsData,
+                });
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    success: false,
+                    message: 'Error occurs while get The all Blogs Data',
+                });
+            }
+        });
         // all toys get route
         app.get('/my-toys', verifyJWT, async (req, res) => {
             try {
