@@ -4,8 +4,8 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import { MongoClient, ObjectId, ServerApiVersion } from 'mongodb';
-
 // config dotenv
 dotenv.config();
 
@@ -37,12 +37,39 @@ const client = new MongoClient(uri, {
         deprecationErrors: true,
     },
 });
+// verify jwt
+const verifyJWT = (req, res, next) => {
+    const { authorization } = req.headers;
+
+    if (!authorization) {
+        return res.status(201).json({ message: 'Unauthorized Access!!!' });
+    }
+    const token = authorization.split(' ')[1];
+    try {
+        const verifyToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        req.user = verifyToken;
+        next();
+    } catch (error) {
+        console.log(error);
+        res.status(201).json({ message: 'Unauthorized Access!!!' });
+    }
+};
+
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
         const allToys = client.db('Toy-Troppers').collection('AllToys');
+
+        // jwt
+        app.post('/jwt', async (req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: '1d',
+            });
+            res.json({ token });
+        });
 
         // all toys get route
         app.get('/all-toys', async (req, res) => {
@@ -67,7 +94,7 @@ async function run() {
             }
         });
         // all toys get route
-        app.get('/my-toys', async (req, res) => {
+        app.get('/my-toys', verifyJWT, async (req, res) => {
             try {
                 const { sellerEmail, sortBy } = req.query;
 
@@ -115,7 +142,7 @@ async function run() {
         });
 
         // add toys
-        app.post('/add-toys', async (req, res) => {
+        app.post('/add-toys', verifyJWT, async (req, res) => {
             try {
                 const toyData = req.body.data;
                 const singleToyAddData = await allToys.insertOne(toyData);
@@ -134,7 +161,7 @@ async function run() {
         });
 
         // single id update toy information
-        app.patch('/update-toys-details', async (req, res) => {
+        app.patch('/update-toys-details', verifyJWT, async (req, res) => {
             try {
                 const { id } = req.query;
                 const updateDoc = {
@@ -161,7 +188,7 @@ async function run() {
         });
 
         // single id delete toy information
-        app.delete('/delete-toys-details', async (req, res) => {
+        app.delete('/delete-toys-details', verifyJWT, async (req, res) => {
             try {
                 const { id } = req.query;
                 const singleToysDeleteData = await allToys.deleteOne({ _id: new ObjectId(id) });
