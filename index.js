@@ -78,6 +78,8 @@ async function run() {
         // all toys get route
         app.get('/all-toys', async (req, res) => {
             try {
+                const page = Number(req.query.page) || 0;
+                const perPage = Number(req.query.limit) || 19;
                 const { category, searchQuery } = req.query;
                 let query = {};
                 if (category) {
@@ -86,7 +88,11 @@ async function run() {
                 if (searchQuery) {
                     query.name = { $regex: searchQuery, $options: 'i' };
                 }
-                const allToysData = await allToys.find(query).toArray();
+                const allToysData = await allToys
+                    .find(query)
+                    .skip(page * perPage)
+                    .limit(perPage)
+                    .toArray();
                 res.status(200).json({
                     success: true,
                     message: 'All Toys',
@@ -100,6 +106,25 @@ async function run() {
                 });
             }
         });
+
+        // all toys length
+        app.get('/toys-lengths', async (req, res) => {
+            try {
+                const results = await allToys.estimatedDocumentCount();
+                res.status(200).json({
+                    success: true,
+                    message: 'All Toys Length',
+                    results,
+                });
+            } catch (error) {
+                console.log(error);
+                res.status(500).json({
+                    success: false,
+                    message: 'Error occurs while get The all Toys Length!',
+                });
+            }
+        });
+
         // all toys get route
         app.get('/my-toys', verifyJWT, async (req, res) => {
             try {
