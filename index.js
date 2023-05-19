@@ -96,7 +96,10 @@ async function run() {
         app.get('/single-toys-details/:id', async (req, res) => {
             try {
                 const { id } = req.params;
-                const singleToysData = await allToys.findOne({ _id: new ObjectId(id) });
+                console.log(id);
+                const singleToysData = await allToys.findOne({
+                    _id: new ObjectId(id) || undefined,
+                });
                 res.status(200).json({
                     success: true,
                     message: 'Single Toy Details.',
