@@ -120,10 +120,9 @@ async function run() {
         });
 
         // single id fetching toy information
-        app.get('/single-toys-details/:id', async (req, res) => {
+        app.get('/single-toys-details/:id', verifyJWT, async (req, res) => {
             try {
                 const { id } = req.params;
-                console.log(id);
                 const singleToysData = await allToys.findOne({
                     _id: new ObjectId(id) || undefined,
                 });
