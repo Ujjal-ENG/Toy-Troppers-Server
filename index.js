@@ -8,6 +8,8 @@ import jwt from 'jsonwebtoken';
 import { MongoClient, ObjectId, ServerApiVersion } from 'mongodb';
 // config dotenv
 dotenv.config();
+// PORT
+const PORT = process.env.PORT || 8080;
 
 // app initialization
 const app = express();
@@ -73,9 +75,9 @@ async function run() {
         });
 
         // for searching
-        const indexKeys = { name: 1 };
-        const indexOptions = { name: 'name' };
-        await allToys.createIndex(indexKeys, indexOptions);
+        // const indexKeys = { name: 1 };
+        // const indexOptions = { name: 'name' };
+        // await allToys.createIndex(indexKeys, indexOptions);
         // all toys get route
         app.get('/all-toys', async (req, res) => {
             try {
@@ -258,16 +260,13 @@ async function run() {
 
         // Send a ping to confirm a successful connection
         // await client.db('admin').command({ ping: 1 });
-        console.log('Pinged your deployment. You successfully connected to MongoDB!');
+        // console.log('Pinged your deployment. You successfully connected to MongoDB!');
     } finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
     }
 }
 run().catch(console.dir);
-
-// PORT and listen the app
-const PORT = process.env.PORT || 8080;
 
 // listen the port
 app.listen(PORT, () => {
